@@ -86,15 +86,8 @@ mark_Seam <- function(img) {
 }
 
 remove_seam <- function(img) {
-  #Check if there is exactly 1 NA per row
-  if (any(apply(img, c(2, 3), function(x)
-    sum(is.na(x))) != 1)) {
-    stop("Error: Multiple NA's in one row")
-    
-  } else{
-    img_reduced <- aperm(apply(img, c(2, 3), na.omit), c(1, 2, 3))
-    return(Image(img_reduced, colormode = 2))
-  }
+  img_reduced <- aperm(apply(img, c(2, 3), na.omit), c(1, 2, 3))
+  return(Image(img_reduced, colormode = 2))
 }
 
 #Mark and remove one seam at a time, n times
@@ -119,22 +112,81 @@ remove_rows <- function(img, n) {
   return(img)
 }
 
-#Function for removing x columns and y rosw of a given RGB 
-seam_carver <- function(imgPath, ncols, nrows) {
-  img <- readImage(imgPath)
-  print("original dimensions:")
-  print(dim(img))
-  img_reduced_r<- remove_rows(img, nrows)
-  print("rows removed...")
-  img_reduced <- remove_columns(img_reduced_r, ncols)
-  print("columns removed...")
-  print("reduced dimensions:")
-  print(dim(img_reduced))
+
+parseImage <- function(imgPath){
+  tryCatch(
+    expr = {
+      img <- readImage(imgPath)
+      return(img)
+    },
+    error= function(e){
+      stop(e)
+    }
+  )
+}
+
+#Function for validating the input arguments
+checkUserInput <- function(img, ncols, nrows){
   
-  display(img_reduced)
+  tryCatch(
+    expr = {
+      img_cols <- as.numeric(dim(img)[1])
+      img_rows <- as.numeric(dim(img)[2])
+      
+      if(img_cols < 2 || img_rows < 2) stop("Image is 2x2 or smaller.")
+    },
+    error = function(e){
+      stop("Dimensions of image could not be identified.")
+    }
+  )
+  
+  tryCatch(
+    expr = {
+      channels <- as.numeric(dim(img)[3])
+
+      if(channels != 3) stop("Number of channels in image needs to be 3. RGB images only.")
+    },
+    error = function(e){
+      stop("Number of channels could not be identified. Three channel RGB image required.")
+    }
+  )
+  
+  tryCatch(
+    expr = {
+      na_in_image <- any(apply(img, c(2, 3), function(x) sum(is.na(x))) != 0)
+      
+      if(na_in_image) stop("Image contains NA.")
+    },
+    error = function(e){
+      stop("Number of NA's in image could not be checked.")
+    }
+  )
+  
+  
+  if(!is.numeric(ncols) || !is.numeric(nrows)){
+    stop("Arguments for number of columns and rows to be removed have integers.")
+  }else if(ncols < 0 || nrows < 0){
+    stop("Arguments for number of columns and rows to be removed have to be positive integers.")
+  }else if(ncols == 0 && nrows == 0){
+    stop("At least of argument of ncols or nrows has to be provided.")
+  }else if(ncols >= img_cols || nrows >= img_rows){
+    stop("Arguments for number of columns and rows have to be smaller than dimensions of image.")
+  }
+}
+
+
+#Function for removing x columns and y rosw of a given RGB 
+seam_carver <- function(imgPath, ncols = 0, nrows = 0) {
+  img <- parseImage(imgPath)
+  checkUserInput(img, ncols, nrows)
+  img_reduced_r<- remove_rows(img, nrows)
+  img_reduced <- remove_columns(img_reduced_r, ncols)
   return(img_reduced)
 }
 
-path <- "testimg.jpg"
-resized_img <- seam_carver(path, 10, 13)
+path <- "test.jpg"
+resized_img <- seam_carver(path, 1, 1)
 display(resized_img)
+
+
+
