@@ -7,10 +7,8 @@
 #DOCS: browseVignettes("EBImage")
 
 
-
 library(EBImage)
 
-#working
 calc_energy <- function(img) {
   print(img, short = T)
   
@@ -36,19 +34,13 @@ calc_energy <- function(img) {
   return(imgE_summed)
 }
 
-
-
-
 minimum_seam <- function(img, ncol, nrow) {
   energy_map <- calc_energy(img)
   M <- energy_map
   backtrack <- energy_map * 0L
   
-  for (c in c(1:nrow)) {
-    for (r in c(2:ncol)) {
-      
-      
-      
+  for (c in c(1:ncol)) {
+    for (r in c(2:nrow)) {
       if (c == 1) {
         idx = which.min(c(M[c, r - 1], M[c + 1, r - 1]))
         backtrack[c, r] = idx + c - 1
@@ -66,54 +58,63 @@ minimum_seam <- function(img, ncol, nrow) {
   }
   min_energy
   
-  
   M[c, r] = M[c, r] + min_energy
   result <- list(M = M, backtrack = backtrack)
   return(result)
 }
 
 
+mark_Seam <- function(img){
+  ncol <- as.numeric(dim(img)[1])
+  nrow <- as.numeric(dim(img)[2])
 
-
-carve_column <- function(img , ncol, nrow) {
   imgEMap <- minimum_seam(img, ncol, nrow)
   M <- imgEMap$M
   backtrack <- imgEMap$backtrack
   
-  #Creating a (c,r) matrix filled with the value TRUE
-  #All pixels that need to be removed will be marked as FALSE in the mask
-  mask <- matrix(TRUE, ncol = ncol, nrow = nrow,)
+  img_array <- as.array(img)
   
-  #Position of smallest element in the last row of M
-  ielem <- which.min(imgEMap$M[, nrow])
+  c <- which.min(M[,nrow])
   
-  for (r in rev(c(1:nrow))) {
-    mask[r, ielem] = FALSE
-    ielem = backtrack[ielem, r]
+  for(r in rev(c(1:nrow))){
+    img_array[c,r,] = NA
+    c = backtrack[c, r]
   }
   
-  return(mask)
+  test <- na.omit(img)
+  return(Image(img_array, colormode = 2))
 }
 
 
+remove_seam <- function(img){
+  #Check if there is exactly 1 NA per row
+  if(any(apply(img, c(2, 3), function(x) sum(is.na(x))) != 1)){
+    stop("Error: Multiple NA's in one row")
+    
+  }else{
+    img_reduced <- aperm(apply(img, c(2,3), na.omit), c(1,2,3))
+    return(Image(img_reduced, colormode = 2))
+  }
+}
 
+remove_columns <- function(img, ncols_to_remove){
+  seam_image <- img
+  reduced_image<- img
+  for(i in c(1:ncols_to_remove)){
+    seam_image = mark_Seam(seam_image)
+    reduced_image = remove_seam(seam_image)
+  }
+  
+  return(reduced_image)
+}
+
+
+colsToremoved <- 2
+rowsremoved <- 13
 img <- readImage("testimg.jpg")
-ncol <- dim(img)[1]
-nrow <- dim(img)[2]
-
-mask <- carve_column(img, ncol, nrow)
-
-#length(which(mask)) #Number of TRUE's in mask -> Should be (ncol * nrow) - nrow
 
 
-r <- img[, , 1]
-g <- img[, , 2]
-b <- img[, , 3]
+img_reduced <- remove_columns(img, colsToremoved)
+display(img_reduced)
 
 
-r_masked <- Image(matrix(r[mask], nrow = nrow, ncol = ncol - 1))
-g_masked <- Image(matrix(g[mask], nrow = nrow, ncol = ncol - 1))
-b_masked <- Image(matrix(b[mask], nrow = nrow, ncol = ncol - 1))
-
-test_masked <-rgbImage(red = r_masked, green = g_masked, blue = b_masked)
-display(test_masked)
