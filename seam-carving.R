@@ -2,21 +2,22 @@
 #RUN:
 #
 if (!requireNamespace("BiocManager", quietly = TRUE))
-install.packages("BiocManager")
+  install.packages("BiocManager")
 BiocManager::install("EBImage")
 #DOCS: browseVignettes("EBImage")
 
 
 library(EBImage)
 
+# Function for calculating the energy map using Sobel
 calc_energy <- function(img) {
   #print(img, short = T)
   
-  # define horizontal and vertical Sobel kernel
-  kernal_h <- matrix(c(1, 2, 1, 0, 0, 0,-1,-2,-1), nrow = 3)
+  # horizontal and vertical Sobel kernel
+  kernal_h <- matrix(c(1, 2, 1, 0, 0, 0, -1, -2, -1), nrow = 3)
   kernal_v <- t(kernal_h)
   
-  # get horizontal and vertical edges
+  # horizontal and vertical edges
   imgH <- filter2(img, kernal_h, boundary = "replicate")
   
   imgV <- filter2(img, kernal_v, boundary = "replicate")
@@ -29,17 +30,17 @@ calc_energy <- function(img) {
   # transform edge data to image
   imgE <- Image(edata, colormode = 2)
   
-  display(combine(img, imgH, imgV, imgE),method = "raster",all = T)
-
+  display(combine(img, imgH, imgV, imgE), method = "raster", all = T)
+  
   imgE_summed <- (imgE@.Data[, , 1] + imgE@.Data[, , 2] + imgE@.Data[, , 3]) / 3
   return(imgE_summed)
 }
 
+# Function for calculating the minimal cost map and a backtrack map for finding seams.
 minimum_seam <- function(img, ncol, nrow) {
   energy_map <- calc_energy(img)
-  
   M <- energy_map #Map of pixel costs
-  backtrack <- energy_map * 0L # used for finding min energy path
+  backtrack <- energy_map * 0L # used for finding min energy seam
   
   for (c in c(1:ncol)) {
     for (r in c(2:nrow)) {
@@ -64,6 +65,7 @@ minimum_seam <- function(img, ncol, nrow) {
   return(result)
 }
 
+# Function for replacing the values of the lowest cost seam in the image with NA
 mark_Seam <- function(img) {
   ncol <- as.numeric(dim(img)[1])
   nrow <- as.numeric(dim(img)[2])
@@ -77,7 +79,7 @@ mark_Seam <- function(img) {
   c <- which.min(M[, nrow])
   
   for (r in rev(c(1:nrow))) {
-    img_array[c, r,] = NA
+    img_array[c, r, ] = NA
     c = backtrack[c, r]
   }
   
@@ -85,12 +87,14 @@ mark_Seam <- function(img) {
   return(Image(img_array, colormode = 2))
 }
 
+# Function for omitting all NA's in the image, which represent the seam.
+# Image is reshaped to new dimensions after.
 remove_seam <- function(img) {
   img_reduced <- aperm(apply(img, c(2, 3), na.omit), c(1, 2, 3))
   return(Image(img_reduced, colormode = 2))
 }
 
-#Mark and remove one seam at a time, n times
+# Function for removing n lowest cost seams in image (Vertical)
 remove_columns <- function(img, n) {
   for (i in 1:n) {
     img = mark_Seam(img)
@@ -99,8 +103,9 @@ remove_columns <- function(img, n) {
   return(img)
 }
 
-#Same as in remove_columns function, but first the image is rotated
+# Function for removing n lowest cost seams in image (Horizontal).
 remove_rows <- function(img, n) {
+  #rotation
   img <- Image(aperm(img, c(2, 1, 3)), colormode = 2)
   
   for (i in 1:n) {
@@ -108,34 +113,36 @@ remove_rows <- function(img, n) {
     img = remove_seam(img)
   }
   
+  #rotate back to original orientation
   img <- Image(aperm(img, c(2, 1, 3)), colormode = 2)
   return(img)
 }
 
-
-parseImage <- function(imgPath){
+# Function for reading the image from the given path.
+parseImage <- function(imgPath) {
   tryCatch(
     expr = {
       img <- readImage(imgPath)
       return(img)
     },
-    error= function(e){
+    error = function(e) {
       stop(e)
     }
   )
 }
 
-#Function for validating the input arguments
-checkUserInput <- function(img, ncols, nrows){
-  
+# Function for validating the input arguments.
+checkUserInput <- function(img, ncols, nrows) {
   tryCatch(
     expr = {
       img_cols <- as.numeric(dim(img)[1])
       img_rows <- as.numeric(dim(img)[2])
       
-      if(img_cols < 2 || img_rows < 2) stop("Image is 2x2 or smaller.")
+      if (img_cols < 2 ||
+          img_rows < 2)
+        stop("Image is 2x2 or smaller.")
     },
-    error = function(e){
+    error = function(e) {
       stop("Dimensions of image could not be identified.")
     }
   )
@@ -143,50 +150,49 @@ checkUserInput <- function(img, ncols, nrows){
   tryCatch(
     expr = {
       channels <- as.numeric(dim(img)[3])
-
-      if(channels != 3) stop("Number of channels in image needs to be 3. RGB images only.")
+      
+      if (channels != 3)
+        stop("Number of channels in image needs to be 3. RGB images only.")
     },
-    error = function(e){
+    error = function(e) {
       stop("Number of channels could not be identified. Three channel RGB image required.")
     }
   )
   
   tryCatch(
     expr = {
-      na_in_image <- any(apply(img, c(2, 3), function(x) sum(is.na(x))) != 0)
+      na_in_image <-any(apply(img, c(2, 3), function(x)sum(is.na(x))) != 0)
       
-      if(na_in_image) stop("Image contains NA.")
+      if (na_in_image) 
+        stop("Image contains NA.")
     },
-    error = function(e){
+    error = function(e) {
       stop("Number of NA's in image could not be checked.")
     }
   )
   
-  
-  if(!is.numeric(ncols) || !is.numeric(nrows)){
+  if (!is.numeric(ncols) || !is.numeric(nrows)) {
     stop("Arguments for number of columns and rows to be removed have integers.")
-  }else if(ncols < 0 || nrows < 0){
+  } else if (ncols < 0 || nrows < 0) {
     stop("Arguments for number of columns and rows to be removed have to be positive integers.")
-  }else if(ncols == 0 && nrows == 0){
+  } else if (ncols == 0 && nrows == 0) {
     stop("At least of argument of ncols or nrows has to be provided.")
-  }else if(ncols >= img_cols || nrows >= img_rows){
+  } else if (ncols >= img_cols || nrows >= img_rows) {
     stop("Arguments for number of columns and rows have to be smaller than dimensions of image.")
   }
 }
 
-
-#Function for removing x columns and y rosw of a given RGB 
+# Function for removing x columns and y rows of a given RGB image.
 seam_carver <- function(imgPath, ncols = 0, nrows = 0) {
   img <- parseImage(imgPath)
   checkUserInput(img, ncols, nrows)
-  img_reduced_r<- remove_rows(img, nrows)
+  img_reduced_r <- remove_rows(img, nrows)
   img_reduced <- remove_columns(img_reduced_r, ncols)
   return(img_reduced)
 }
 
+
+
 path <- "test.jpg"
 resized_img <- seam_carver(path, 1, 1)
 display(resized_img)
-
-
-
