@@ -36,7 +36,7 @@ calc_energy <- function(img) {
   # transform edge data to image
   imgE <- Image(edata, colormode = 2)
 
-  display(combine(img, imgH, imgV, imgE), method = "raster", all = T)
+  #display(combine(img, imgH, imgV, imgE), method = "raster", all = T)
 
   imgE_summed <- (imgE@.Data[, , 1] + imgE@.Data[, , 2] + imgE@.Data[, , 3]) / 3
   return(imgE_summed)
@@ -245,13 +245,13 @@ checkUserInput <- function(img, ncols, nrows) {
 #' reducedImage <- sc_reduce(filePath, ncols = 1, nrows = 1)
 #' display(reducedImage$reduced_img)
 #' display(reducedImage$energy_map)
-
+#' class(reducedImage)
 sc_reduce <- function(imgPath, ncols = 0, nrows = 0) {
   img <- parseImage(imgPath)
   checkUserInput(img, ncols, nrows)
   eMap <- calc_energy(img)
   img_reduced_r <- remove_rows(img, nrows)
   img_reduced <- remove_columns(img_reduced_r, ncols)
-  result <- structure( list(energy_map = eMap, reduced_img = img_reduced), class="SCIMAGE")
+  result <- structure( list(energy_map = eMap, reduced_img = img_reduced), class="SC-IMAGE")
   return(result)
 }
