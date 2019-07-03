@@ -14,8 +14,7 @@
 \maketitle
 
 \section{Introduction}
-Changing image dimensions by croping or by rescaling can often result in a loss of information or distorted
-image content.
+Changing image dimensions by croping or by rescaling can often result in a loss of information or distorted image content.
 The SeamCarving package provides an implementation of the Seam Carving algorithm to solve this task.
 Seam Carving is the process of calculating an energy and cost value for every pixel of a given image
 and removing an 8-connected path of pixels, vertical or horizontal, to reduce the dimensions of the given image with respect to the content of the image.
@@ -26,8 +25,8 @@ The algorithm consists of three major parts:
   \item Calculate a cost map, where each value represents the minimal cost to reach a pixel from the image top
   \item Remove lowest cost seam by:
   \begin{itemize}
-    \item Finding least cost value in bottom pixel row
-    \item backtrack least cost seam
+    \item Finding lowest cost value in bottom pixel row
+    \item backtrack lowest cost seam
     \item remove all pixels in that seam
     \item Reshape image to fit new dimensions
   \end{itemize}
@@ -39,8 +38,6 @@ A more indepth description of the algorithm can be found in Shai Avidan et al. (
 <<echo=FALSE, results=hide, print=FALSE>>=
 library(EBImage)
 library(SeamCarving)
-filePath <- system.file("images", "sample-color.png", package="EBImage")
-#image_reduced <- sc_reduce(filePath, 10, 10)
 @
 
 The SeamCarving package supports RGB, three channel, PNG, JPG and TIF files.
@@ -80,7 +77,7 @@ The cost map can now be generated in the following manner:
 Where ~$M$ is an Array with the minimum cost of all pixels, ~$i$ is the current row, ~$j$ is the current column and ~$e(i,j)$ is the energy of the current pixel.
 Essentially, the cost of any given pixel is the energy value of said pixel and the minimum value of the three pixels above it.
 \\ \\
-The resulting cost map can be used to find the least cost seam, the pixel path with the lowest calculated impact on the content of the image:
+The resulting cost map can be used to find the lowest cost seam, the pixel path with the lowest calculated impact on the content of the image:
 
 \begin{figure}[H]
 \centering
@@ -88,7 +85,7 @@ The resulting cost map can be used to find the least cost seam, the pixel path w
 seam_image <- sc_mark_leastCSeam(imagePath)$seam_image
 display(seam_image)
 @
-\caption{Image with least cost seam (red)}
+\caption{Image with lowest cost seam (red)}
 \label{fig:seam_image}
 \end{figure}
 
@@ -96,18 +93,77 @@ The marked pixel seam in figure \ref{fig:seam_image} can be removed and the imag
 \\ \\
 This whole process has to be conducted for every iteration of removing a seam because once a connected path of pixels is removed from the image, the enrgy map and the cost map are no longer accurate and have to be calculated again.
 The introduced process focused on vertical seam removal and works for horizontal seam removal by rotating the image by 90°.
-The final reduction, using the SeamCarving package, looks like this:
+
+\newpage
+\section{Usage}
+The previous section showed figures that represented every step of the Seam Carving process, which were generated with the SeamCarving package.
+This section will explain the functions that the package provides.
+
+\subsection{sc\_reduce}
+This function reduces the dimensions of an RGB image. The function expects the following arguments:
+  \begin{itemize}
+    \item Path to the image
+    \item Number of pixels by which the width has to be reduced
+    \item Number of pixels by which the height has to be reduced
+  \end{itemize}
+
+It is also possible to reduce an image only in width or height by providing only one of those two arguments. \\ \\
+The function returns an object of class $SC-Image$. This class object contains the calculated energy map, a two dimensional array, and the reduced image which is of class Image (EBImage).
 
 \begin{figure}[H]
 \centering
 <<fig = TRUE >>=
-image_reduced <- sc_reduce(imagePath, 10, 5)$reduced_img
-dim(image_reduced)
-display(image_reduced)
+result <- sc_reduce(imagePath, ncols = 8, nrows = 12)
+attributes(result)
+dim(result$reduced_img)
+display(result$reduced_img)
 @
-\caption{Image with reduced dimensions: 758x507 pixels and 3 channels }
+\caption{Image with reduced dimensions: From 768x512 to 760x500}
 \label{fig:reduced_img}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+<<fig = TRUE >>=
+result <- sc_reduce(imagePath, ncols = 18)
+dim(result$reduced_img)
+display(result$reduced_img)
+@
+\caption{Image with reduced width only: From 768x512 to 750x512}
+\label{fig:reduced_img_widthONLY}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+<<fig = TRUE >>=
+dim(result$energy_map)
+display(result$energy_map)
+@
+\caption{Energy map of the original image }
+\label{fig:energy_map}
+\end{figure}
+
+
+\newpage
+\subsection{sc\_mark\_leastCSeam}
+This function marks the lowest cost seam in a given image and returns an object of class
+$SC-SImage$ which contains the energy map used to calculate the lowest cost seam and the image with the marked pixels. The function expects one argument:
+ \begin{itemize}
+    \item Path to the image
+  \end{itemize}
+
+\begin{figure}[H]
+\centering
+<<fig = TRUE >>=
+result <- sc_mark_leastCSeam(imagePath)
+attributes(result)
+display(result$seam_image)
+@
+\caption{Image with marked lowest cost seam}
+\label{fig:seam_image}
+\end{figure}
+
 
 
 \newpage

@@ -6,6 +6,7 @@ Author: Viktor Gorte
 Maintainer: Viktor Gorte <v_gort01@uni-muenster.de>
 Description: Content Aware Image Resizing by removing 8-connected pixel seams with least cost.
 Depends: 
+  R (>= 2.15.0),
   EBImage, 
   stats
 License: GPL (>= 2)
