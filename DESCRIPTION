@@ -1,11 +1,23 @@
 Package: SeamCarving
 Type: Package
-Title: Reduce Image Dimensions with Seam Carving algorithm
+Title: Reduce Image Dimensions with Seam Carving
 Version: 0.1.0
 Author: Viktor Gorte
 Maintainer: Viktor Gorte <v_gort01@uni-muenster.de>
-Description: Content Aware Image Resizing by removing 8-connected pixel seams with least energy.
-Suggests: EBImage
-License: GPL (>= 2)
+Description: Content Aware Image Resizing by removing 8-connected pixel seams with least cost.
+Depends: 
+  EBImage, 
+  stats
+License: MIT
 Encoding: UTF-8
+Collate: 
+  parse_image.R
+  check_user_input.R
+  calc_energy.R 
+  min_cost_map.R
+  mark_seam.R
+  remove_seam.R
+  sc_mark_leastCSeam.R
+  sc_reduce.R
+  seam-carving-package.R
 RoxygenNote: 6.1.1.9000
