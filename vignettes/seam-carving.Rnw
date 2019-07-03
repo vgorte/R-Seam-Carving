@@ -88,7 +88,7 @@ The resulting cost map can be used to find the least cost seam, the pixel path w
 seam_image <- sc_mark_leastCSeam(imagePath)$seam_image
 display(seam_image)
 @
-\caption{Energy Map}
+\caption{Image with least cost seam (red)}
 \label{fig:seam_image}
 \end{figure}
 
