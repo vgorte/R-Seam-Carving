@@ -18,11 +18,11 @@ Changing image dimensions by croping or by rescaling can often result in a loss 
 image content.
 The SeamCarving package provides an implementation of the Seam Carving algorithm to solve this task.
 Seam Carving is the process of calculating an energy and cost value for every pixel of a given image
-and removing an 8-connected path of pixels, vertical or horizontal, to reduce the dimensions of the given image with respect to the content of the image
+and removing an 8-connected path of pixels, vertical or horizontal, to reduce the dimensions of the given image with respect to the content of the image.
 The algorithm consists of three major parts:
 
 \begin{itemize}
-  \item Generate an energymap of the image
+  \item Generate an energy map of the image
   \item Calculate a cost map, where each value represents the minimal cost to reach a pixel from the image top
   \item Remove lowest cost seam by:
   \begin{itemize}
@@ -60,7 +60,7 @@ display(img)
 
 First, an energy map needs to be calculated. For that, a vertical and horizontal Sobel kernal is used which
 provides a good estimate about contrasts and edges in the image. The cost of a pixel inside a high contrast area will be higher and therefore more likely effect the primary content of the image.
-The energy map for \ref{fig:sfm} can be seen in the following figure:
+The energy map for figure \ref{fig:original_img} can be seen in the following figure:
 
 \begin{figure}[H]
 \centering
@@ -92,9 +92,11 @@ display(seam_image)
 \label{fig:seam_image}
 \end{figure}
 
-The marked pixel seam in \ref{fig:seam_image} can be removed and the image can be resized to fit the reduced dimensions.
+The marked pixel seam in figure \ref{fig:seam_image} can be removed and the image can be resized to fit the reduced dimensions.
 \\ \\
-This whole process has to be conducted for every iteration of removing a seam because once a connected path of pixels is removed from the image, the enrgy map and the cost map are no longer accurate and have to be calculated again. The final reduction, using the SeamCarving package, looks like this:
+This whole process has to be conducted for every iteration of removing a seam because once a connected path of pixels is removed from the image, the enrgy map and the cost map are no longer accurate and have to be calculated again.
+The introduced process focused on vertical seam removal and works for horizontal seam removal by rotating the image by 90°.
+The final reduction, using the SeamCarving package, looks like this:
 
 \begin{figure}[H]
 \centering
