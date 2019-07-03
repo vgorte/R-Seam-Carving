@@ -10,9 +10,9 @@ calc_energy(img)
 \item{img}{EBImage Image class object}
 }
 \value{
-EBImage Image
+Array
 }
 \description{
-Function for calculating the energy map of a given EBImage::Image.
+Function for calculating the energy map of a given EBImage Image.
 Energy is calculated by using horizontal and vertical sobel kernals.
 }

@@ -1,12 +1,10 @@
 #' calc_energy
 #'
-#' Function for calculating the energy map of a given EBImage::Image.
+#' Function for calculating the energy map of a given EBImage Image.
 #' Energy is calculated by using horizontal and vertical sobel kernals.
 #' @param img EBImage Image class object
-#' @return EBImage Image
+#' @return Array
 calc_energy <- function(img) {
-  #print(img, short = T)
-
   # horizontal and vertical Sobel kernel
   kernal_h <- matrix(c(1, 2, 1, 0, 0, 0, -1, -2, -1), nrow = 3)
   kernal_v <- t(kernal_h)

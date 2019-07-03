@@ -8,7 +8,7 @@ Description: Content Aware Image Resizing by removing 8-connected pixel seams wi
 Depends: 
   EBImage, 
   stats
-License: MIT
+License: GPL (>= 2)
 Encoding: UTF-8
 Collate: 
   parse_image.R

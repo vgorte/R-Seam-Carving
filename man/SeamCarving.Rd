@@ -11,7 +11,7 @@ marking the least cost seam in vertical direction.
 }
 \section{Functions}{
 
-sc_remove(...)
+sc_reduce(...)
 
 sc_leastCSeam(...)
 }
