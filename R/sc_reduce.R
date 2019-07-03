@@ -4,7 +4,7 @@
 #' @param imgPath Path to a RGB image. (.PNG / .JPG / .TIF)
 #' @param ncols Number by which the width has to be decreased
 #' @param nrows Number by which the height has to be decreased
-#' @return SC-IMAGE <EnergyMap & Resized Image>
+#' @return SC-Image <EnergyMap & Resized Image>
 #' @export
 #' @examples
 #' library(EBImage)
@@ -19,6 +19,6 @@ sc_reduce <- function(imgPath, ncols = 0, nrows = 0) {
   eMap <- calc_energy(img)
   img_reduced_r <- remove_rows(img, nrows)
   img_reduced <- remove_columns(img_reduced_r, ncols)
-  result <- structure( list(energy_map = eMap, reduced_img = img_reduced), class="SC-IMAGE")
+  result <- structure( list(energy_map = eMap, reduced_img = img_reduced), class="SC-Image")
   return(result)
 }

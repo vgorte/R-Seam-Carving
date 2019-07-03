@@ -14,7 +14,7 @@ sc_reduce(imgPath, ncols = 0, nrows = 0)
 \item{nrows}{Number by which the height has to be decreased}
 }
 \value{
-SC-IMAGE <EnergyMap & Resized Image>
+SC-Image <EnergyMap & Resized Image>
 }
 \description{
 Removes least energy vertical and/or horizontal pixel seams to reduce the size of a given image with respect to its contents.

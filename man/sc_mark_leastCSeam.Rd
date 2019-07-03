@@ -10,7 +10,7 @@ sc_mark_leastCSeam(imgPath)
 \item{imgPath}{Path to a three channel image. (.PNG / .JPG / .TIF)}
 }
 \value{
-SC-SIMAGE <EnergyMap & Image with marked seam>
+SC-SImage <EnergyMap & Image with marked seam>
 }
 \description{
 Marks the least cost seam in vertical direction.

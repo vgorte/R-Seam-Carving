@@ -2,7 +2,7 @@
 #'
 #' Marks the least cost seam in vertical direction.
 #' @param imgPath Path to a three channel image. (.PNG / .JPG / .TIF)
-#' @return SC-SIMAGE <EnergyMap & Image with marked seam>
+#' @return SC-SImage <EnergyMap & Image with marked seam>
 #' @export
 #' @examples
 #' library(EBImage)
@@ -15,6 +15,6 @@ sc_mark_leastCSeam <- function(imgPath) {
   img <- parseImage(imgPath)
   eMap <- calc_energy(img)
   seamImage <- mark_Seam(img, mark = TRUE)
-  result <- structure( list(energy_map = eMap, seam_image = seamImage), class="SC-SIMAGE")
+  result <- structure( list(energy_map = eMap, seam_image = seamImage), class="SC-SImage")
   return(result)
 }
