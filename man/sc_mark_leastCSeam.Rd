@@ -2,7 +2,7 @@
 % Please edit documentation in R/sc_mark_leastCSeam.R
 \name{sc_mark_leastCSeam}
 \alias{sc_mark_leastCSeam}
-\title{Seam Carving <Mark Least Cost Seam>}
+\title{sc_mark_leastCSeam}
 \usage{
 sc_mark_leastCSeam(imgPath)
 }

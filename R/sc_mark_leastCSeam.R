@@ -1,4 +1,4 @@
-#' Seam Carving <Mark Least Cost Seam>
+#' sc_mark_leastCSeam
 #'
 #' Marks the least cost seam in vertical direction.
 #' @param imgPath Path to a three channel image. (.PNG / .JPG / .TIF)

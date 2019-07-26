@@ -2,10 +2,10 @@
 #'
 #' Function for calculating the minimal cost map and a backtrack map for finding seams.
 #' @param img EBImage Image class object
-#' @param ncol Number by which the width has to be decreased
-#' @param nrow Number by which the height has to be decreased
 #' @return list(EnergyMap , BacktrackMap)
-min_cost_map <- function(img, ncol, nrow) {
+min_cost_map <- function(img) {
+  ncol <- as.numeric(dim(img)[1])
+  nrow <- as.numeric(dim(img)[2])
   energy_map <- calc_energy(img)
   M <- energy_map #Map of pixel costs
   backtrack <- energy_map * 0L # used for finding min energy seam

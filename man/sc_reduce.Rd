@@ -2,7 +2,7 @@
 % Please edit documentation in R/sc_reduce.R
 \name{sc_reduce}
 \alias{sc_reduce}
-\title{Seam Carving <Reduce>}
+\title{sc_reduce}
 \usage{
 sc_reduce(imgPath, ncols = 0, nrows = 0)
 }
@@ -14,7 +14,7 @@ sc_reduce(imgPath, ncols = 0, nrows = 0)
 \item{nrows}{Number by which the height has to be decreased}
 }
 \value{
-SC-Image <EnergyMap & Resized Image>
+SC-Image <Resized Image>
 }
 \description{
 Removes least energy vertical and/or horizontal pixel seams to reduce the size of a given image with respect to its contents.
@@ -23,7 +23,6 @@ Removes least energy vertical and/or horizontal pixel seams to reduce the size o
 library(EBImage)
 filePath <- system.file("images", "sample-color.png", package="EBImage")
 reducedImage <- sc_reduce(filePath, ncols = 1, nrows = 1)
-display(reducedImage$energy_map)
-display(reducedImage$reduced_img)
+display(reducedImage$img_reduced)
 class(reducedImage)
 }

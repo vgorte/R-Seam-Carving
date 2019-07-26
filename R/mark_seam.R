@@ -9,7 +9,7 @@ mark_Seam <- function(img, mark = FALSE) {
   ncol <- as.numeric(dim(img)[1])
   nrow <- as.numeric(dim(img)[2])
 
-  imgEMap <- min_cost_map(img, ncol, nrow)
+  imgEMap <- min_cost_map(img)
   M <- imgEMap$M
   backtrack <- imgEMap$backtrack
 
@@ -25,7 +25,6 @@ mark_Seam <- function(img, mark = FALSE) {
       img_array[c, r, ] = NA
       c = backtrack[c, r]
     }
-
   }
 
   test <- na.omit(img)

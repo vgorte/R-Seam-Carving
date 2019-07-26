@@ -1,4 +1,4 @@
-Package: SeamCarving
+Package: sc
 Type: Package
 Title: Reduce Image Dimensions with Seam Carving
 Version: 0.1.0
@@ -8,7 +8,8 @@ Description: Content Aware Image Resizing by removing 8-connected pixel seams wi
 Depends: 
   R (>= 2.15.0),
   EBImage, 
-  stats
+  stats,
+  R.utils
 License: GPL (>= 2)
 Encoding: UTF-8
 Collate: 
@@ -18,7 +19,11 @@ Collate:
   min_cost_map.R
   mark_seam.R
   remove_seam.R
+  lowest_k_indices.R
+  backtrack_seam.R
+  duplicate_seam_in_img.R
   sc_mark_leastCSeam.R
   sc_reduce.R
+  sc_increase.R
   seam-carving-package.R
 RoxygenNote: 6.1.1.9000

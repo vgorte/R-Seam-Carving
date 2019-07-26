@@ -4,14 +4,10 @@
 \alias{min_cost_map}
 \title{min_cost_map}
 \usage{
-min_cost_map(img, ncol, nrow)
+min_cost_map(img)
 }
 \arguments{
 \item{img}{EBImage Image class object}
-
-\item{ncol}{Number by which the width has to be decreased}
-
-\item{nrow}{Number by which the height has to be decreased}
 }
 \value{
 list(EnergyMap , BacktrackMap)

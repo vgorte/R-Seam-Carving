@@ -36,16 +36,16 @@ remove_columns <- function(img, n) {
 
 remove_rows <- function(img, n) {
   #rotation
-  img <- Image(aperm(img, c(2, 1, 3)), colormode = 2)
   if(n != 0){
+  img <- Image(aperm(img, c(2, 1, 3)), colormode = 2)
     for (i in 1:n) {
       if(i != 0){
         img = mark_Seam(img)
         img = remove_seam(img)
       }
     }
-  }
   #rotate back to original orientation
   img <- Image(aperm(img, c(2, 1, 3)), colormode = 2)
+  }
   return(img)
 }
