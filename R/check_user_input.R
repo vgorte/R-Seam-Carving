@@ -44,7 +44,7 @@ checkUserInput <- function(img, ncols, nrows) {
   )
 
   if (!is.numeric(ncols) || !is.numeric(nrows)) {
-    stop("Arguments for number of columns and rfilows to be removed have to be integers.")
+    stop("Arguments for number of columns and rows to be removed have to be integers.")
   } else if (ncols < 0 || nrows < 0) {
     stop("Arguments for number of columns and rows to be removed have to be positive integers.")
   } else if (ncols == 0 && nrows == 0) {
